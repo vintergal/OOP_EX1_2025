@@ -13,31 +13,60 @@ public class GameLogic implements PlayableLogic{
         this.is_player1_turn=true;
         int size=this.getBoardSize();
         this.board=new Disc[size][size];
-
-
     }
-    public List<Position> getDisksToFlipPositions(Position disc_placed_at, boolean include_unflippable){
+    private Player getCurrentPlayer(){
+        if (this.is_player1_turn){
+            return player1;
+        }
+        else {
+            return player2;
+        }
+    }
+    private void addDisksToFlipByBombToList(Position bomb_placed_at,List<Position> listToAddTo){
+        List<Position> otherPlayerDiscs=new ArrayList<Position>();
+        for (int vec_y = -1; vec_y <=1 ; vec_y++) {
+            for (int vec_x = -1; vec_x <=1 ; vec_x++) {
+                if (vec_y==0 && vec_x==0){
+                    continue; // the bomb itself position
+                }
+                Position pos_to_check=new Position(bomb_placed_at.row()+vec_y,bomb_placed_at.col()+vec_x);
+                Disc disc_to_check=this.getDiscAtPosition(pos_to_check);
+                if (disc_to_check==null){
+                    //went out of bound or to empty
+                    continue;
+                }
+
+                if (disc_to_check.getOwner().isPlayerOne()!=this.getCurrentPlayer().isPlayerOne()
+                        && !listToAddTo.contains(pos_to_check)
+                         && (!disc_to_check.getType().equals(UnflippableDisc.Symbol))){
+                    listToAddTo.add(pos_to_check);
+                    if (disc_to_check.getType().equals(BombDisc.Symbol)){
+                        this.addDisksToFlipByBombToList(pos_to_check,listToAddTo);
+                    }
+                }
+
+            }
+        }
+    }
+    public List<Position> getDisksToFlipPositions(Position disc_placed_at){
         List<Position> otherPlayerDiscs=new ArrayList<Position>();
         Player thisPlayer,otherPlayer;
         if (this.is_player1_turn){
             thisPlayer=player1;
-            otherPlayer=player2;
         }
         else {
             thisPlayer=player2;
-            otherPlayer=player1;
         }
 
-        for (int i = -1; i <=1 ; i++) {
-            for (int j = -1; j <=1 ; j++) {
+        for (int vec_y = -1; vec_y <=1 ; vec_y++) {
+            for (int vec_x = -1; vec_x <=1 ; vec_x++) {
                 boolean is_other_player_discs_between=false;
-                int row_to_check=disc_placed_at.row()+i;
-                int col_to_check=disc_placed_at.col()+j;
-                if (i==0 && j==0){
+                if (vec_y==0 && vec_x==0){
                     continue; // because in this case it will not move in any direction
                 }
                 List<Position> otherPlayerInThisDirection=new ArrayList<Position>();
-                while (true){
+                for (int row_to_check=disc_placed_at.row()+vec_y, col_to_check=disc_placed_at.col()+vec_x;;
+                     row_to_check+=vec_y,col_to_check+=vec_x){
 
                     Position pos_to_check=new Position(row_to_check,col_to_check);
                     Disc disc_to_check=this.getDiscAtPosition(pos_to_check);
@@ -59,13 +88,19 @@ public class GameLogic implements PlayableLogic{
                     }else{
                         //in this location there is other player disk
                         is_other_player_discs_between=true;
-                        if (include_unflippable || !disc_to_check.getType().equals("⭕")) {
+                        if (disc_to_check.getOwner().isPlayerOne()!=this.getCurrentPlayer().isPlayerOne()
+                                && (!disc_to_check.getType().equals(UnflippableDisc.Symbol))){
                             otherPlayerInThisDirection.add(pos_to_check);
                         }
+
                     }
-                    row_to_check+=i;
-                    col_to_check+=j;
                 }
+            }
+        }
+        for (int i=0; i<otherPlayerDiscs.size();i++){
+            Position pos= otherPlayerDiscs.get(i);
+            if (this.getDiscAtPosition(pos).getType().equals(BombDisc.Symbol)){
+                addDisksToFlipByBombToList(pos,otherPlayerDiscs);
             }
         }
         return otherPlayerDiscs;
@@ -73,11 +108,23 @@ public class GameLogic implements PlayableLogic{
 
     @Override
     public boolean locate_disc(Position a, Disc disc) {
-
-        //TODO
-        // now only places without checking if valid and without flips
-        //consider what to do with that it isnt clear that you need to create the moves before the disc placing
         if (this.isValidMove(a)) {
+            Player disc_owner=disc.getOwner();
+            String disc_type=disc.getType();
+            if (disc_type.equals(BombDisc.Symbol)){
+                if (disc_owner.getNumber_of_bombs()>0) {
+                    disc_owner.reduce_bomb();
+                }else {
+                    return false;
+                }
+
+            } else if (disc_type.equals(UnflippableDisc.Symbol)){
+                if (disc_owner.getNumber_of_unflippedable()>0) {
+                    disc_owner.reduce_unflippedable();
+                }else {
+                    return false;
+                }
+            }
             Move move = new Move(this, disc, a);
             moves.add(move);
             move.executeMove();
@@ -93,9 +140,9 @@ public class GameLogic implements PlayableLogic{
         if (diskToFlip!=null) //second test for bug prevention
         {
             if (diskToFlip.getOwner().isPlayerOne){
-                diskToFlip.setOwner(player2);
+                diskToFlip.setOwner(this.player2);
             }else{
-                diskToFlip.setOwner(player1);
+                diskToFlip.setOwner(this.player1);
             }
         }
     }
@@ -106,8 +153,6 @@ public class GameLogic implements PlayableLogic{
 
     @Override
     public Disc getDiscAtPosition(Position position) {
-
-        //TODO
         int size=this.getBoardSize();
         int col=position.col();
         int row=position.row();
@@ -120,16 +165,15 @@ public class GameLogic implements PlayableLogic{
 
     @Override
     public int getBoardSize() {
-
-        //TODO
+        // TODO check what should it be
         return 8;
     }
 
     private boolean isValidMove(Position position){
-        if (this.getDiscAtPosition(position)!=null){
+        if (this.getDiscAtPosition(position)!=null){ // if the squere already has disc, new disc cant be placed there
             return false;
         }
-        return !this.getDisksToFlipPositions(position,true).isEmpty();
+        return countFlips(position)>0;
     }
 
     @Override
@@ -149,15 +193,11 @@ public class GameLogic implements PlayableLogic{
 
     @Override
     public int countFlips(Position a) {
-
-        //TODO
-        //for now without bombs
-        return this.getDisksToFlipPositions(a,false).size();
+        return this.getDisksToFlipPositions(a).size();
     }
 
     @Override
     public Player getFirstPlayer() {
-
         return this.player1;
     }
 
@@ -183,10 +223,10 @@ public class GameLogic implements PlayableLogic{
         return this.ValidMoves().isEmpty();
     }
 
+
     @Override
     public void reset() {
         //TODO
-
         int size=this.getBoardSize();
         this.board=new Disc[size][size];
         this.board[size/2][size/2]=new SimpleDisc(player1);
@@ -194,14 +234,36 @@ public class GameLogic implements PlayableLogic{
         this.board[size/2][size/2-1]=new SimpleDisc(player2);
         this.board[size/2-1][size/2-1]=new SimpleDisc(player1);
         this.moves= new Stack<Move>();
+        for (Player player : new Player[]{player1, player2}) {
+            player.reset_bombs_and_unflippedable();
+        }
+    }
+    private void increaseSpecialDisc(Disc disc,Player player){
+        if (!disc.getType().equals(SimpleDisc.Symbol)){
+            int special_before_undo;
+            if (disc.getType().equals(BombDisc.Symbol)){
+                int todo=0;
+            }
+        }
+    }
+    private void changeTurn(){
+        this.is_player1_turn=!this.is_player1_turn;
     }
 
     @Override
     public void undoLastMove() {
-        //TODO
         if (!this.moves.isEmpty()) {
-            this.moves.pop().undo();
-            this.is_player1_turn=!this.is_player1_turn;
+            Move lastMove = this.moves.pop();
+            lastMove.undo();
+            if (lastMove.disc().getType().equals(BombDisc.Symbol)){
+                lastMove.disc().getOwner().increase_bomb();
+            } else if (lastMove.disc().getType().equals(UnflippableDisc.Symbol)){
+                lastMove.disc().getOwner().increase_unflippedable();
+            }
+            this.changeTurn();
+        }else {
+           System.out.println("\tNo previous move available to undo.");
         }
+        System.out.println();
     }
 }

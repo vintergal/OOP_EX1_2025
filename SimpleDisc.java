@@ -1,5 +1,6 @@
 public class SimpleDisc implements Disc{
     private Player owner;
+    public static final String Symbol="⬤";
     public SimpleDisc(Player player){
         this.owner=player;
     }
@@ -16,6 +17,6 @@ public class SimpleDisc implements Disc{
 
     @Override
     public String getType() {
-        return "⬤";
+        return SimpleDisc.Symbol;
     }
 }

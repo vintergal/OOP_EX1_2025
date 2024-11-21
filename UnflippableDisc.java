@@ -1,5 +1,6 @@
 public class UnflippableDisc implements Disc{
     private Player owner;
+    public static final String Symbol="⭕";
     public UnflippableDisc(Player player){
         this.owner=player;
     }
@@ -16,6 +17,6 @@ public class UnflippableDisc implements Disc{
 
     @Override
     public String getType() {
-        return "⭕";
+        return UnflippableDisc.Symbol;
     }
 }
