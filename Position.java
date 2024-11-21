@@ -1,6 +1,6 @@
 public class Position {
-    private int _row;
-    private int _col;
+    private final int _row;
+    private final int _col;
 
     public Position(int row, int col){
         this._row=row;
@@ -10,9 +10,7 @@ public class Position {
     public int row() {
         return this._row;
     }
-    public int col() {
-        return this._col;
-    }
+    public int col() {return this._col;}
 
     @Override
     public boolean equals(Object obj) {
@@ -23,6 +21,7 @@ public class Position {
         return (this._row==other_position.row() && this._col==other_position.col());
     }
 
+    @Override
     public String toString(){
         return String.format("(%d, %d)",this._row,this._col);
     }

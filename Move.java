@@ -1,12 +1,12 @@
 import java.util.List;
-import java.util.Stack;
+
 
 public class Move {
-    private Disc _disc;
-    private Position _position;
-    private List<Position> flippedDisksPositions;
-    private Disc[][] ptr_board;
-    private GameLogic game_logic;
+    private final Disc _disc;
+    private final Position _position;
+    private final List<Position> flippedDisksPositions;
+    private final Disc[][] ptr_board;
+    private final GameLogic game_logic;
     public Move(GameLogic game_logic,Disc _disc, Position _position){
         this.game_logic=game_logic;
         this.ptr_board=game_logic.getBoardPtr();
@@ -32,18 +32,12 @@ public class Move {
         return this._position;
     }
     public void undo(){
-        //TODO
         System.out.print("Undoing last move :\n");
         this.ptr_board[_position.row()][_position.col()]=null;
-
-
         System.out.printf("\tUndo: removing %s from %s\n",this._disc.getType(),this._position.toString());
         for (Position pos : this.flippedDisksPositions){
             this.game_logic.flipDisc(pos);
             System.out.printf("\tUndo: flipping back %s in %s\n",game_logic.getDiscAtPosition(pos).getType(),pos.toString());
         }
-
     }
-
-
 }
