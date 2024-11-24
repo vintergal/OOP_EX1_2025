@@ -1,5 +1,6 @@
 public class BombDisc implements Disc{
     private Player owner;
+    public static final String Symbol="💣";
     public BombDisc(Player player){
         this.owner=player;
     }
@@ -16,7 +17,7 @@ public class BombDisc implements Disc{
 
     @Override
     public String getType() {
-        return "💣";
+        return BombDisc.Symbol;
     }
 
 }

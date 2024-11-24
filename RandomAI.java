@@ -17,7 +17,7 @@ public class RandomAI extends AIPlayer{
 
     @Override
     public Move makeMove(PlayableLogic gameStatus) {
-        List<Position> moves = ValidMoves();
+        List<Position> moves = this.ValidMoves();
         if (moves.size()>0) {
             int numOfMoves = moves.size();  //range to pick a random move from
             Random rand = new Random();     //creating an instance of Random
