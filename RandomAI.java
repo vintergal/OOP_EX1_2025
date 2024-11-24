@@ -32,19 +32,19 @@ public class RandomAI extends AIPlayer{
             switch (availableDiscs.get(randomDiscIndex)) {
                 case "simple" -> {
                     SimpleDisc disc = new SimpleDisc(this);
-                    Move move = new Move(this,disc,randomPosition);
+                    Move move = new Move(gameStatus,disc,randomPosition);
                     return move;
                     break;
                 }
                 case "bomb" -> {
                     BombDisc disc = new BombDisc(this);
-                    Move move = new Move(this,disc,randomPosition);
+                    Move move = new Move(gameStatus,disc,randomPosition);
                     return move;
                     break;
                 }
                 case "unflippedable" -> {
                     UnflippableDisc disc = new UnflippableDisc(this);
-                    Move move = new Move(this,disc,randomPosition);
+                    Move move = new Move(gameStatus,disc,randomPosition);
                     return move;
                     break;
                 }

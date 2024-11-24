@@ -31,9 +31,8 @@ public class GreedyAI extends AIPlayer{
                 greedyPos = greedyMoves.get(i);
             }
         }
-
-
-
-        return null;
+        SimpleDisc disc = new SimpleDisc(this);
+        Move move = new Move(gameStatus,disc,greedyPos);
+        return move;
     }
 }
