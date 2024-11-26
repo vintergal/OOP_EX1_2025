@@ -7,18 +7,18 @@ public class GreedyAI extends AIPlayer{
     }
 
     public Move makeMove(PlayableLogic gameStatus) {
-        List<Position> moves = this.ValidMoves();
+        List<Position> moves = gameStatus.ValidMoves();
         List<Position> greedyMoves=new ArrayList<Position>(); //a list of all the greedy moves
         int mostFlips = 0;
-        for (int i=0; i<this.ValidMoves().size();i++) {
-            Position currentPos = new Position(ValidMoves().get(i).row,ValidMoves().get(i).col());
-            int numOfMoves = greedyMoves.get(i).countFlips(currentPos); //GameLogic methode
-            if(numOfMoves>mostFlips) {
+        for (int i=0; i<moves.size();i++) {
+            Position currentPos = new Position(moves.get(i).row(),moves.get(i).col());
+            int numOfFlips = gameStatus.countFlips(currentPos);
+            if(numOfFlips>mostFlips) {
                 greedyMoves.clear(); //reset the greedy moves
                 greedyMoves.add(currentPos);
-                mostFlips = numOfMoves;
+                mostFlips = numOfFlips;
             }
-            if(numOfMoves==mostFlips) {
+            if(numOfFlips==mostFlips) {
                 greedyMoves.add(currentPos);
             }
         }
@@ -32,7 +32,6 @@ public class GreedyAI extends AIPlayer{
             }
         }
         SimpleDisc disc = new SimpleDisc(this);
-        Move move = new Move(gameStatus,disc,greedyPos);
-        return move;
+        return new Move((GameLogic) gameStatus,disc,greedyPos);
     }
 }

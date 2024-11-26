@@ -17,7 +17,7 @@ public class RandomAI extends AIPlayer{
 
     @Override
     public Move makeMove(PlayableLogic gameStatus) {
-        List<Position> moves = this.ValidMoves();
+        List<Position> moves = gameStatus.ValidMoves();
         if (moves.size()>0) {
             int numOfMoves = moves.size();  //range to pick a random move from
             Random rand = new Random();     //creating an instance of Random
@@ -32,26 +32,17 @@ public class RandomAI extends AIPlayer{
             switch (availableDiscs.get(randomDiscIndex)) {
                 case "simple" -> {
                     SimpleDisc disc = new SimpleDisc(this);
-                    Move move = new Move(gameStatus,disc,randomPosition);
-                    return move;
-                    break;
+                    return new Move((GameLogic) gameStatus,disc,randomPosition);
                 }
                 case "bomb" -> {
                     BombDisc disc = new BombDisc(this);
-                    Move move = new Move(gameStatus,disc,randomPosition);
-                    return move;
-                    break;
+                    return new Move((GameLogic) gameStatus,disc,randomPosition);
                 }
                 case "unflippedable" -> {
                     UnflippableDisc disc = new UnflippableDisc(this);
-                    Move move = new Move(gameStatus,disc,randomPosition);
-                    return move;
-                    break;
+                    return new Move((GameLogic) gameStatus,disc,randomPosition);
                 }
             }
-
-
-
         }
         return null;
     }
