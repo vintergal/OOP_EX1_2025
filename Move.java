@@ -16,7 +16,7 @@ public class Move {
     }
 
     /**
-     * placing the specific disc at the specific position defined in this move and flipping all the discs that sould be flipped by it
+     * placing the specific disc at the specific position defined in this move and flipping all the discs that should be flipped by it
      * and printing info of the disc placement the all the flips
      *
      */
@@ -50,8 +50,8 @@ public class Move {
     }
 
     /**
-     * undoing this specific move - remove the disc placed at it and flip back all the dics flipped at it
-     * and printing info of the disc removed the all the dics flipped back
+     * undoing this specific move - remove the disc placed at it and flip back all the discs flipped at it
+     * and printing info of the disc removed the all the discs flipped back
      */
     public void undo(){
         System.out.print("Undoing last move :\n");

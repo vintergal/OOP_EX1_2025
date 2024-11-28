@@ -18,7 +18,7 @@ public class UnflippableDisc implements Disc{
     /**
      * set the owner of the disc
      *
-     * @param player the player to be assign to the disc
+     * @param player the player to be assigned to the disc
      */
     @Override
     public void setOwner(Player player) {
@@ -28,7 +28,7 @@ public class UnflippableDisc implements Disc{
     /**
      * get the type of the disc
      *
-     * @return the string symbol of an unflippable disc
+     * @return the string symbol of an unflappable disc
      */
     @Override
     public String getType() {

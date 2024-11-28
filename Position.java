@@ -26,7 +26,7 @@ public class Position {
     /**
      * indicate if this position equal to another position
      *
-     * @param obj the othere position
+     * @param obj the other position
      * @return true if the two position equal and false if they are not equal or if the other object is not of Position type
      */
     @Override
@@ -47,24 +47,6 @@ public class Position {
     public String toString(){
         return String.format("(%d, %d)",this._row,this._col);
     }
-    // Comparators
-    /**
-     * Compares two positions' columns
-     *
-     * @param other the position to compare to
-     * @return true if the position is in a column to the right of the parameter position
-     */
-    public boolean isRightTo(Position other){
-        return this.col() > other.col();
-    }
-    /**
-     * Compares two positions' row
-     *
-     * @param other the position to compare to
-     * @return true if the position is in a row under of the parameter position
-     */
-    public boolean isUnder(Position other){
-        return this.row() > other.row();
-    }
+
 }
 

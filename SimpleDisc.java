@@ -18,7 +18,7 @@ public class SimpleDisc implements Disc{
     /**
      * set the owner of the disc
      *
-     * @param player the player to be assign to the disc
+     * @param player the player to be assigned to the disc
      */
     @Override
     public void setOwner(Player player) {
