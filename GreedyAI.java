@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class GreedyAI extends AIPlayer{
     public GreedyAI(boolean isPlayerOne) {
@@ -10,7 +9,8 @@ public class GreedyAI extends AIPlayer{
         List<Position> moves = gameStatus.ValidMoves();
         List<Position> greedyMoves=new ArrayList<Position>(); //a list of all the greedy moves
         int mostFlips = 0;
-        for (int i=0; i<moves.size();i++) {
+
+        /* for (int i=0; i<moves.size();i++) {
             Position currentPos = new Position(moves.get(i).row(),moves.get(i).col());
             int numOfFlips = gameStatus.countFlips(currentPos);
             if(numOfFlips>mostFlips) {
@@ -32,6 +32,33 @@ public class GreedyAI extends AIPlayer{
             }
         }
         SimpleDisc disc = new SimpleDisc(this);
+        return new Move((GameLogic) gameStatus,disc,greedyPos); */
+
+        Comparator<Position> comparatorByPosition= new Comparator<Position>() {
+            @Override
+            public int compare(Position o1, Position o2) {
+                if (o1.col()>o2.col()){ // o1 is righter
+                    return 1; // for o1
+                } else if(o1.col()<o2.col()) { // o2 is righter
+                    return -1; // for o2
+                }else{ //same col
+                    return Integer.compare(o1.row(), o2.row()); // return 1 if o1 below, -1 if o2 below and 0 if the same
+                }
+            }
+        };
+        for (Position currentPos : moves) {
+            int numOfFlips = gameStatus.countFlips(currentPos);
+            if (numOfFlips > mostFlips) {
+                greedyMoves.clear(); //reset the greedy moves
+                greedyMoves.add(currentPos);
+                mostFlips = numOfFlips;
+            }
+            if (numOfFlips == mostFlips) {
+                greedyMoves.add(currentPos);
+            }
+        }
+        SimpleDisc disc = new SimpleDisc(this);
+        Position greedyPos = Collections.max(greedyMoves,comparatorByPosition);
         return new Move((GameLogic) gameStatus,disc,greedyPos);
     }
 }
