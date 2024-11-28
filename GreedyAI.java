@@ -11,6 +11,13 @@ public class GreedyAI extends AIPlayer{
         int mostFlips = 0;
 
         Comparator<Position> comparatorByPosition= new Comparator<Position>() {
+            /**
+             * compare the two positions by location
+             *
+             * @param o1 the first position to be compared.
+             * @param o2 the second position to be compared.
+             * @return (if both at the same col return 1 if o1 is below, -1 if o2 below, or else 0) else if o1 is righter return 1 and -1 if o2 is righter
+             */
             @Override
             public int compare(Position o1, Position o2) {
                 if (o1.col()>o2.col()){ // o1 is righter
